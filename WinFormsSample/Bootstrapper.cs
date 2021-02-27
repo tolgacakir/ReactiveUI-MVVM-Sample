@@ -1,34 +1,56 @@
-﻿using ReactiveUI;
+﻿using Autofac;
+using ReactiveUI;
 using Splat;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using WinFormsSample.ViewModels;
 using WinFormsSample.Views;
+using Splat.Autofac;
 
 namespace WinFormsSample
 {
     public class Bootstrapper
     {
+        private readonly IContainer _container;
+
         public Bootstrapper()
         {
-            ConfigureServices();
-        }
-        private void ConfigureServices()
-        {
-            Locator.CurrentMutable.Register(() => new MainView(), typeof(IViewFor<MainViewModel>));
-            Locator.CurrentMutable.Register(() => new HomeView(), typeof(IViewFor<HomeViewModel>));
-            Locator.CurrentMutable.Register(() => new SettingsView(), typeof(IViewFor<SettingsViewModel>));
-            Locator.CurrentMutable.Register(() => new DiagnosticsView(), typeof(IViewFor<DiagnosticsViewModel>));
+            _container = ConfigureServices();
 
+            var autofacResolver = _container.Resolve<AutofacDependencyResolver>();
+            autofacResolver.SetLifetimeScope(_container);
         }
+
+        private IContainer ConfigureServices()
+        {
+            var builder = new ContainerBuilder();
+
+            builder.Register(c => new MainView())
+                .As<IViewFor<MainViewModel>>()
+                .SingleInstance();
+            builder.Register(c => new MainViewModel())
+                .As<IScreen>()
+                .SingleInstance();
+
+            builder.Register(c => new HomeView())
+                .As<IViewFor<HomeViewModel>>();
+            builder.Register(c => new DiagnosticsView())
+                .As<IViewFor<DiagnosticsViewModel>>();
+            builder.Register(c => new SettingsView())
+                .As<IViewFor<SettingsViewModel>>();
+
+
+            var autofacResolver = builder.UseAutofacDependencyResolver();
+            builder.RegisterInstance(autofacResolver);
+            autofacResolver.InitializeReactiveUI();
+
+            return builder.Build();
+        }
+
         public void Run()
         {
-            var viewModel = new MainViewModel();
-            Locator.CurrentMutable.RegisterConstant(viewModel, typeof(IScreen));
-            var view = ViewLocator.Current.ResolveView(viewModel);
-            view.ViewModel = viewModel;
+            var view = _container.Resolve<IViewFor<MainViewModel>>();
+            var viewModel = _container.Resolve<IScreen>();
+            view.ViewModel = (MainViewModel)viewModel;
             Application.Run((Form)view);
         }
     }
