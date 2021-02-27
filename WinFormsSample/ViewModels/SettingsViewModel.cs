@@ -17,6 +17,14 @@ namespace WinFormsSample.ViewModels
         public string UrlPathSegment { get; protected set; }
         public IScreen HostScreen { get; protected set; }
 
+        private string _permanentState;
+        public string PermanentState
+        {
+            get => _permanentState;
+            set => this.RaiseAndSetIfChanged(ref _permanentState, value);
+        }
+
+
         public SettingsViewModel()
         {
             Title = "Settings";
