@@ -27,7 +27,7 @@ namespace WinFormsSample
             builder.Register(c => new MainView())
                 .As<IViewFor<MainViewModel>>()
                 .SingleInstance();
-            builder.Register(c => new MainViewModel())
+            builder.Register(c => new MainViewModel(_container))
                 .As<IScreen>()
                 .SingleInstance();
 
@@ -38,6 +38,15 @@ namespace WinFormsSample
             builder.Register(c => new SettingsView())
                 .As<IViewFor<SettingsViewModel>>();
 
+            builder.Register(c => new HomeViewModel())
+                .As<HomeViewModel>()
+                .SingleInstance();
+            builder.Register(c => new SettingsViewModel())
+                .As<SettingsViewModel>()
+                .SingleInstance();
+            builder.Register(c => new DiagnosticsViewModel())
+                .As<DiagnosticsViewModel>()
+                .SingleInstance();
 
             var autofacResolver = builder.UseAutofacDependencyResolver();
             builder.RegisterInstance(autofacResolver);
