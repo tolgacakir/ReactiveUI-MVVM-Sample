@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using Autofac;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Reactive;
@@ -31,18 +32,18 @@ namespace WinFormsSample.ViewModels
             set => this.RaiseAndSetIfChanged(ref _currentViewModel, value);
         }
 
-        private readonly HomeViewModel _homeViewModel = new HomeViewModel();
-        private readonly SettingsViewModel _settingsViewModel = new SettingsViewModel();
-        private readonly DiagnosticsViewModel _diagnosticsViewModel = new DiagnosticsViewModel();
-
-
         public RoutingState Router { get; }
         public ReactiveCommand<Unit,Unit> ShowHomeCommand { get; }
         public ReactiveCommand<Unit,Unit> ShowSettingsCommand { get; }
         public ReactiveCommand<Unit, Unit> ShowDiagnosticsCommand { get; }
         public ReactiveCommand<Unit,Unit> GoBackCommand { get; }
-        public MainViewModel()
+
+        private readonly IContainer _container;
+
+        public MainViewModel(IContainer container)
         {
+            _container = container;
+
             Router = new RoutingState();
             Title = "Title";
             ShowHomeCommand = ReactiveCommand.Create(ShowHome,
@@ -69,15 +70,15 @@ namespace WinFormsSample.ViewModels
         }
         private void ShowHome()
         {
-            ShowView(_homeViewModel);
+            ShowView(_container.Resolve<HomeViewModel>());
         }
         private void ShowSettings()
         {
-            ShowView(_settingsViewModel);
+            ShowView(_container.Resolve<SettingsViewModel>());
         }
         private void ShowDiagnostics()
         {
-            ShowView(_diagnosticsViewModel);
+            ShowView(_container.Resolve<DiagnosticsViewModel>());
         }
         private void GoBack()
         {
