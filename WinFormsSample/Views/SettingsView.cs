@@ -19,6 +19,7 @@ namespace WinFormsSample.Views
             this.WhenActivated(d =>
             {
                 d(this.OneWayBind(ViewModel, vm => vm.Title, v => v.lblTitle.Text));
+                d(this.Bind(ViewModel, vm => vm.PermanentState, v => v.txtPermanentState.Text));
             });
         }
 
