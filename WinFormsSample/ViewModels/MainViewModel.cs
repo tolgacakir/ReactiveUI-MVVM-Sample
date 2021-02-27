@@ -31,6 +31,11 @@ namespace WinFormsSample.ViewModels
             set => this.RaiseAndSetIfChanged(ref _currentViewModel, value);
         }
 
+        private readonly HomeViewModel _homeViewModel = new HomeViewModel();
+        private readonly SettingsViewModel _settingsViewModel = new SettingsViewModel();
+        private readonly DiagnosticsViewModel _diagnosticsViewModel = new DiagnosticsViewModel();
+
+
         public RoutingState Router { get; }
         public ReactiveCommand<Unit,Unit> ShowHomeCommand { get; }
         public ReactiveCommand<Unit,Unit> ShowSettingsCommand { get; }
@@ -64,15 +69,15 @@ namespace WinFormsSample.ViewModels
         }
         private void ShowHome()
         {
-            ShowView(new HomeViewModel());
+            ShowView(_homeViewModel);
         }
         private void ShowSettings()
         {
-            ShowView(new SettingsViewModel());
+            ShowView(_settingsViewModel);
         }
         private void ShowDiagnostics()
         {
-            ShowView(new DiagnosticsViewModel());
+            ShowView(_diagnosticsViewModel);
         }
         private void GoBack()
         {
